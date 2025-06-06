@@ -1,12 +1,10 @@
 
 import os
 import sqlalchemy as db
-from dotenv import load_dotenv
-from kalowrie.kalowrie.settings import SQL_CONFIG
+from kalowrie.settings import SQL_CONFIG
 
 class SQLQuery:
     def __init__(self):
-        load_dotenv()
 
         self.resultset = []
 
@@ -15,7 +13,7 @@ class SQLQuery:
 
 
 
-    def _query(self, query=None, parameters=None, is_serialized=True):
+    def __query(self, query=None, parameters=None, is_serialized=True):
             if parameters is None:
                 parameters = {}
 
