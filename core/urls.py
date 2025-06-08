@@ -10,5 +10,6 @@ from . import views
 urlpatterns = [
     re_path('^login$', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    re_path('^ai/', include('core.ai.urls'))
+    re_path('^ai/', include('core.ai.urls')),
+    re_path(r'^user/', include('core.user.urls')),
 ]

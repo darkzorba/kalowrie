@@ -9,5 +9,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_first_access'] = user.is_first_access
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
+        token['user_id'] = user.id
 
         return token

@@ -29,8 +29,8 @@ SECRET_KEY = 'django-insecure-2wziql-v3u&b2p)b@i1p_%k8x8&+0tjvob(#r7j((p6i3w8_a8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1',    "http://localhost:8081",
-]
+ALLOWED_HOSTS = ['127.0.0.1', '*']
+
 
 
 # Application definition
@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'core',
     'core.user',
-    'core.ai'
+    'core.ai',
+    'core.user.diet'
 ]
 
 REST_FRAMEWORK = {

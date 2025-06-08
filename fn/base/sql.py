@@ -2,6 +2,7 @@
 import os
 import sqlalchemy as db
 from kalowrie.settings import SQL_CONFIG
+from django.utils import timezone
 
 class SQLQuery:
     def __init__(self):
@@ -104,7 +105,7 @@ class SQLQuery:
 
     def save(self, table_name, dict_save, pk_name='id', is_values_list=True, is_first=True):
 
-
+        dict_save = self.__build_log(dict_save, log_type='save')
         columns_list = dict_save.keys()
 
         columns = ','.join(columns_list)
@@ -119,3 +120,19 @@ class SQLQuery:
         result = self.__query(query=query, parameters=dict_save)
 
         return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)
+
+
+    def __build_log(self, dict_object, log_type):
+        mapper_dict = {
+            'save':'datm_update',
+            'insert':'datm_insert',
+            'update':'datm_update',
+            'delete':'datm_delete',
+        }
+        datm_col = mapper_dict[log_type]
+        if datm_col == 'datm_update' and 'id' not in dict_object:
+            datm_col = 'datm_insert'
+        if 'status' not in dict_object:
+            dict_object['status'] = True if log_type != 'delete' else False
+        dict_object[datm_col] = timezone.now()
+        return dict_object
