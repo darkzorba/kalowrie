@@ -136,3 +136,35 @@ class SQLQuery:
             dict_object['status'] = True if log_type != 'delete' else False
         dict_object[datm_col] = timezone.now()
         return dict_object
+
+    def bulk_insert(self, table_name, list_dict_insert, pk_name='id', is_values_list=True, is_first=False,returning=None):
+        if not list_dict_insert:
+            return None
+
+        if not returning:
+            returning = pk_name
+
+
+        columns = ''
+        values = ''
+        parameters = {}
+        for count, dict_insert in enumerate(list_dict_insert):
+            dict_insert = self.__build_log(dict_object=dict_insert, log_type='insert')
+
+            if not columns:
+                columns = ','.join(dict_insert.keys())
+
+            values_name = ''
+            for chave, valor in dict_insert.items():
+                parameters[f"{chave}_{count}"] = valor
+                values_name += f" :{chave}_{count},"
+            values_name = values_name[:-1]
+
+            values += f"({values_name}),"
+        values = values[:-1]
+
+        query = f'insert into {table_name}({columns}) values {values} RETURNING {returning};'
+
+        result = self.__query(query=query, parameters=parameters)
+
+        return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)

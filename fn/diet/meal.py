@@ -9,7 +9,8 @@ class Meal(SQLQuery):
         self.diet_id = diet_id
 
     @Response(desc_error="Error saving meal.", return_list=[])
-    def save_meal(self, name, meal_time, meal_date, total_kcals, total_proteins, total_carbs, total_fats):
+    def save_meal(self, name, meal_time, meal_date, total_kcals, total_proteins, total_carbs, total_fats,
+                  list_ingredients):
         dict_meal = {
             'name': name,
             'time': meal_time,
@@ -20,7 +21,19 @@ class Meal(SQLQuery):
             'carbs_gr': total_carbs,
             'user_id': self.user_id,
         }
-        self.save(table_name="public.user_meal",dict_save=dict_meal)
+        meal_id = self.save(table_name="public.user_meal",dict_save=dict_meal)
+
+        list_insert_ingredients = []
+        for ingredient in list_ingredients:
+            list_insert_ingredients.append({
+                'meal_id': meal_id,
+                'quantity': ingredient['quantity'],
+                'unit': ingredient['default_unit'],
+                'name': ingredient['name'],
+
+            })
+
+        self.bulk_insert('public.user_mealingredient', list_insert_ingredients)
 
         dict_progress = self.select(f"""
         select udp.id,

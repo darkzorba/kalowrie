@@ -9,16 +9,16 @@ import fn.ai.tracker
 
 
 class AIDietView(APIView):
-    def get(self, *args, **kwargs):
-        activity_frequency = self.request.GET.get('activity_frequency')
-        age = self.request.GET.get('age')
-        dietary_preferences = self.request.GET.get('dietary_preferences')
-        dietary_restrictions = self.request.GET.get('dietary_restrictions')
-        eating_routine = self.request.GET.get('eating_routine')
-        gender = self.request.GET.get('gender')
-        height = self.request.GET.get('height')
-        weight = self.request.GET.get('weight')
-        diet_type = self.request.GET.get('diet_type')
+    def post(self, *args, **kwargs):
+        activity_frequency = self.request.data.get('activity_frequency')
+        age = self.request.data.get('age')
+        dietary_preferences = self.request.data.get('dietary_preferences')
+        dietary_restrictions = self.request.data.get('dietary_restrictions')
+        eating_routine = self.request.data.get('eating_routine')
+        gender = self.request.data.get('gender')
+        height = self.request.data.get('height')
+        weight = self.request.data.get('weight')
+        diet_type = self.request.data.get('diet_type')
 
         response = fn.ai.nutricionist.Nutrition().generate_diet(activity_frequency=activity_frequency, age=age,
                                         dietary_preferences=dietary_preferences, dietary_restrictions=dietary_restrictions,

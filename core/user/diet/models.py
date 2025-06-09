@@ -51,3 +51,13 @@ class UserMeal(core.models.Log):
 
     class Meta:
         db_table = '"public"."user_meal"'
+
+
+class UserMealIngredient(core.models.Log):
+    name = models.CharField(max_length=200, null=True)
+    quantity = models.IntegerField(null=True)
+    unit = models.CharField(max_length=50, null=True)
+    meal = models.ForeignKey('diet.UserMeal', on_delete=models.DO_NOTHING, null=True)
+
+    class Meta:
+        db_table = '"public"."user_mealingredient"'
