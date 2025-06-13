@@ -61,3 +61,23 @@ class UserMealIngredient(core.models.Log):
 
     class Meta:
         db_table = '"public"."user_mealingredient"'
+
+
+class FoodMacro(core.models.Log):
+    name = models.CharField(max_length=200, null=True)
+    quantity = models.IntegerField(null=True)
+    fats_g = models.DecimalField(null=True, max_digits=14, decimal_places=2)
+    proteins_g = models.DecimalField(null=True, max_digits=14, decimal_places=2)
+    carbs_g = models.DecimalField(null=True, max_digits=14, decimal_places=2)
+    category = models.ForeignKey('diet.FoodCategory', on_delete=models.DO_NOTHING, null=True)
+    calories = models.DecimalField(null=True, max_digits=14, decimal_places=2)
+
+    class Meta:
+        db_table = '"public"."food_macro"'
+
+
+class FoodCategory(core.models.Log):
+    name = models.CharField(max_length=200, null=True)
+
+    class Meta:
+        db_table = '"public"."food_category"'

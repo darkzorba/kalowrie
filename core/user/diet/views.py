@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 import json
 from fn.diet.diet import Diet
 from fn.diet.meal import Meal
+from fn.diet.food import Food
 # Create your views here.
 
 
@@ -58,5 +59,14 @@ class UserMealView(APIView):
         response = Meal(user_id, diet_id).save_meal(name=name, meal_time=meal_time, meal_date=meal_date, total_kcals=total_kcals,
                                        total_proteins=total_proteins,total_carbs=total_carbs, total_fats=total_fats,
                                                     list_ingredients=list_ingredients)
+
+        return JsonResponse(response, safe=False, status=response['status_code'])
+
+
+class FoodAllView(APIView):
+    def get(self, *args, **kwargs):
+
+        response = Food().get_all_foods()
+
 
         return JsonResponse(response, safe=False, status=response['status_code'])

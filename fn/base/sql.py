@@ -155,9 +155,9 @@ class SQLQuery:
                 columns = ','.join(dict_insert.keys())
 
             values_name = ''
-            for chave, valor in dict_insert.items():
-                parameters[f"{chave}_{count}"] = valor
-                values_name += f" :{chave}_{count},"
+            for key, value in dict_insert.items():
+                parameters[f"{key}_{count}"] = value
+                values_name += f" :{key}_{count},"
             values_name = values_name[:-1]
 
             values += f"({values_name}),"
