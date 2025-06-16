@@ -37,12 +37,18 @@ class Meal(SQLQuery):
 
         dict_progress = self.select(f"""
         select udp.id,
-               udp.total_kcals,
-               udp.total_proteins,
-               udp.total_carbs,
-               udp.total_fats,
-               udp.diet_id
+               udp.total_kcals::float,
+               udp.total_proteins::float,
+               udp.total_carbs::float,
+               udp.total_fats::float,
+               udp.diet_id,
+               ud.carbs_g as carbs_goal,
+               ud.fats_g as fats_goal,
+               ud.proteins_g as proteins_goal,
+               ud.total_kcals as kcals_goal
         from public.user_dailyprogress udp
+            join public.user_diet ud 
+                on ud.id = udp.diet_id  
         where udp.date = :date
               and udp.user_id = :user_id
               and udp.status = true
