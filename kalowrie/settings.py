@@ -48,7 +48,11 @@ INSTALLED_APPS = [
     'core',
     'core.user',
     'core.ai',
-    'core.user.diet'
+    'core.user.diet',
+    'core.team',
+    'core.food',
+    'core.workout',
+    'core.exercise'
 ]
 
 REST_FRAMEWORK = {
@@ -217,3 +221,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.User'
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

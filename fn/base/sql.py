@@ -103,8 +103,9 @@ class SQLQuery:
 
         return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)
 
-    def save(self, table_name, dict_save, pk_name='id', is_values_list=True, is_first=True):
-
+    def save(self, table_name, dict_save, pk_name='id', returning=None ,is_values_list=True, is_first=True):
+        if not returning:
+            returning = pk_name
         dict_save = self.__build_log(dict_save, log_type='save')
         columns_list = dict_save.keys()
 
@@ -114,7 +115,7 @@ class SQLQuery:
 
         query = f"""
             insert into {table_name}({columns}) values ({values_name}) 
-            on conflict ({pk_name}) do update set {update} RETURNING {pk_name};
+            on conflict ({pk_name}) do update set {update} RETURNING {returning};
         """
 
         result = self.__query(query=query, parameters=dict_save)

@@ -16,6 +16,12 @@ class User(AbstractBaseUser, core.models.Log):
     birth_date = models.DateField(null=True)
     objects = BaseUserManager()
     is_first_access = models.BooleanField(default=True, null=True)
+    user_type = models.CharField(max_length=50, null=True)
+    team = models.ForeignKey('team.Team', on_delete=models.DO_NOTHING, null=True)
+    height = models.IntegerField(null=True)
+    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    gender = models.CharField(max_length=50, null=True)
+    age = models.IntegerField(null=True)
 
 
     class Meta:

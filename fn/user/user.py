@@ -19,8 +19,8 @@ class User(SQLQuery):
         new_user_obj.save()
         return new_user_obj.id
 
-
-    def validate_password(self, password: str):
+    @staticmethod
+    def validate_password(password: str):
         rules = [
             (len(password) >= 8, "Password must be at least 8 characters long."),
             (re.search(r"[A-Z]", password), "Password must contain at least one uppercase letter."),

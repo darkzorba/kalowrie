@@ -12,4 +12,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     re_path('^ai/', include('core.ai.urls')),
     re_path(r'^user/', include('core.user.urls')),
+    re_path(r'^food/', include('core.food.urls')),
+    re_path(r'^team/', include('core.team.urls')),
 ]
