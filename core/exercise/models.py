@@ -13,6 +13,8 @@ class Exercise(core.models.Log):
     exercise_type = models.ForeignKey('exercise.ExerciseType', on_delete=models.DO_NOTHING, null=True)
     muscle_group = models.ForeignKey('exercise.MuscleGroup', on_delete=models.DO_NOTHING, null=True)
     equipment = models.ForeignKey('exercise.ExerciseEquipment', on_delete=models.DO_NOTHING, null=True)
+    image_url = models.TextField(null=True)
+    team = models.ForeignKey('team.Team', on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         db_table = '"public"."exercise"'

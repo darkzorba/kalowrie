@@ -11,7 +11,7 @@ from fn.diet.food import Food
 
 class UserDietView(APIView):
     def get(self, *args, **kwargs):
-        user_id = self.request.user.id
+        user_id = self.request.GET.get('student_id') or self.request.user.id
 
         response = Diet(user_id).get_user_diet()
 
@@ -21,18 +21,26 @@ class UserDietView(APIView):
 
     def post(self, *args, **kwargs):
         meals_list = self.request.data.get('meals')
-        user_id = self.request.user.id
+        user_id = self.request.data.get('student_id') or self.request.user.id
         total_carbs = self.request.data.get('carbs_g')
         total_proteins = self.request.data.get('proteins_g')
         total_fats = self.request.data.get('fats_g')
+        diet_id = self.request.data.get('diet_id')
         total_calories = self.request.data.get('total_kcals')
 
-        response = Diet(user_id).create_diet(meals_list=meals_list, total_carbs=total_carbs,
+        response = Diet(user_id, diet_id).create_diet(meals_list=meals_list, total_carbs=total_carbs,
                                              total_fats=total_fats, total_proteins=total_proteins,
                                              total_calories=total_calories)
 
         return JsonResponse(response, safe=False, status=response['status_code'])
 
+    def delete(self, *args, **kwargs):
+
+        user_id = self.request.data.get('student_id') or self.request.user.id
+
+        response = Diet(user_id).disable_diet()
+
+        return JsonResponse(response, safe=False, status=response['status_code'])
 
 
 class ProgressCardsView(APIView):

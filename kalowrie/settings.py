@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'core.user.diet',
     'core.team',
     'core.food',
-    'core.workout',
+    'core.user.workout',
     'core.exercise'
 ]
 

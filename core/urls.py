@@ -14,4 +14,5 @@ urlpatterns = [
     re_path(r'^user/', include('core.user.urls')),
     re_path(r'^food/', include('core.food.urls')),
     re_path(r'^team/', include('core.team.urls')),
+    re_path(r'^exercise/', include('core.exercise.urls')),
 ]

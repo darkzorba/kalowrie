@@ -9,10 +9,10 @@ class Exercise(SQLQuery):
 
     @Response(desc_error="Error trying to get exercises.", return_list=['exercises_list'])
     def get_all_exercises(self, team_id):
-        str_filter = '\n and (e.team_id isnull'
+        str_filter = '\n and (e.team_id isnull \n'
 
         if team_id:
-            str_filter += 'or e.team_id = :team_id)'
+            str_filter += '\n or e.team_id = :team_id)'
         else:
             str_filter += ')'
 
@@ -22,14 +22,14 @@ class Exercise(SQLQuery):
                tp.name as exercise_type,
                mg.name as muscle_group,
                et.name as exercise_equipment,
-               e.image as exercise_image
-        from public.exercise e 
+               e.image_url as exercise_image
+        from public.exercise e
             left join public.muscle_group mg on mg.id = e.muscle_group_id
-            left join public.exercise_type tp on et.id = m.exercise_type_id
-            left join public.exercise_equipment et on et.id = et.exercise_equipment_id
-        where e.status = true 
-              and et.status = true 
-              and tp.status = true 
+            left join public.exercise_type tp on tp.id = e.exercise_type_id
+            left join public.exercise_equipment et on et.id = e.equipment_id
+        where e.status = true
+              and et.status = true
+              and tp.status = true
               and mg.status = true
               {str_filter}  
         """, parameters=dict(team_id=team_id))

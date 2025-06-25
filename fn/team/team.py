@@ -53,4 +53,4 @@ class Team(SQLQuery):
               and u.team_id = :team_id 
               and u.user_type = 'student'
               and u.id = :student_id
-        """, parameters=dict(team_id=self.team_id, student_id=student_id))
+        """, parameters=dict(team_id=self.team_id, student_id=student_id), is_first=True)

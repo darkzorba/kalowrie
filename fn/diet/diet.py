@@ -7,9 +7,10 @@ import json
 
 
 class Diet(SQLQuery):
-    def __init__(self, user_id):
+    def __init__(self, user_id, diet_id = None):
         super().__init__()
         self.user_id = user_id
+        self.diet_id = diet_id
 
     @Response(desc_error="Error saving diet.", return_list=['diet_id'])
     def save_diet(self, diet_dict):
@@ -51,14 +52,16 @@ class Diet(SQLQuery):
 
         return self.select(query,parameters=dict(user_id=self.user_id, date=date),is_first=True)
 
-    @Response(desc_error="Error fetching diet.", return_list=['diet_dict'])
+    @Response(desc_error="Error fetching diet.", return_list=['diet_dict','diet_id'])
     def get_user_diet(self):
-        return self.select("""
-        select ud.diet_json 
+        diet_dict, diet_id = self.select("""
+        select ud.diet_json,
+              ud.id as diet_id
         from public.user_diet ud 
             where ud.user_id = :user_id
             and ud.status = true
         """, parameters=dict(user_id=self.user_id), is_first=True, is_values_list=True)
+        return diet_dict, diet_id
 
 
     @Response(desc_error="Error fetching graphics.", return_list=['graphics_list'])
@@ -78,6 +81,9 @@ class Diet(SQLQuery):
 
     @Response(desc_error="Error saving diet.", return_list=['diet_id'])
     def create_diet(self, meals_list, total_carbs, total_proteins, total_fats, total_calories):
+        if self.diet_id:
+            self.disable_diet(self.diet_id)
+
         dict_diet = {
             'user_id': self.user_id,
             'total_kcals': total_calories,
@@ -174,3 +180,17 @@ class Diet(SQLQuery):
             'proteins_g': total_proteins,
             'meals': meals_list,
         })
+
+    @Response(desc_error='Error trying to delete diet.', return_list=[])
+    def disable_diet(self, diet_id: int = None):
+        dict_filter = {}
+
+        if diet_id:
+            dict_filter.update(id=diet_id)
+        elif self.user_id:
+            dict_filter.update(user_id=self.user_id)
+
+        result = self.disable(table_name='public.user_diet', dict_filter=dict_filter)
+
+        if not result:
+            raise Exception()

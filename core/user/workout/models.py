@@ -1,7 +1,6 @@
 from django.db import models
 
 import core.models
-from core import workout
 
 
 # Create your models here.
@@ -21,11 +20,11 @@ class Workout(core.models.Log):
 class WorkoutExercise(core.models.Log):
     workout = models.ForeignKey('workout.Workout', on_delete=models.DO_NOTHING, null=True)
     exercise = models.ForeignKey('exercise.Exercise', on_delete=models.DO_NOTHING, null=True)
-    series = models.IntegerField(null=True)
+    sets = models.IntegerField(null=True)
     min_reps = models.IntegerField(null=True)
     max_reps = models.IntegerField(null=True)
     observations = models.TextField(null=True)
-    order = models.IntegerField(null=True)
+    exercise_order = models.IntegerField(null=True)
 
     class Meta:
         db_table = u'"public"."workout_exercise"'
@@ -52,7 +51,7 @@ class WorkoutSessionExercise(core.models.Log):
         db_table = u'"public"."workout_session_exercise"'
 
 
-class WorkoutExerciseSessionSet(core.models.Log):
+class WorkoutSessionExerciseSet(core.models.Log):
     session_exercise = models.ForeignKey('workout.WorkoutSessionExercise', on_delete=models.DO_NOTHING, null=True)
     set_number = models.IntegerField(null=True)
     reps_done = models.DecimalField(max_digits=14, decimal_places=2, null=True)
@@ -62,4 +61,4 @@ class WorkoutExerciseSessionSet(core.models.Log):
     reps_in_reserve = models.IntegerField(null=True)
 
     class Meta:
-        db_table = u'"public"."workout_exercise_sessionset"'
+        db_table = u'"workout_session_exerciseset"'

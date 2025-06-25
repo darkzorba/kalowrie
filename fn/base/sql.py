@@ -52,7 +52,7 @@ class SQLQuery:
                is_first=True):
 
 
-
+        dict_update = self.__build_log(dict_update, 'update' if not is_disable else 'delete')
         columns_list = dict_update.keys()
 
         update = ','.join([f'{column} = :{column}' for column in columns_list])
@@ -165,6 +165,91 @@ class SQLQuery:
         values = values[:-1]
 
         query = f'insert into {table_name}({columns}) values {values} RETURNING {returning};'
+
+        result = self.__query(query=query, parameters=parameters)
+
+        return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)
+
+
+    def disable(self, table_name, dict_filter, is_values_list=True, is_first=False, pk_name='id'):
+
+        dict_update = {'status': False}
+
+        return self.update(table_name=table_name, dict_update=dict_update, dict_filter=dict_filter,
+                           is_disable=True, is_values_list=is_values_list, is_first=is_first, pk_name=pk_name)
+
+
+    def bulk_upsert(self, table_name=None, list_dict_save=None, pk_name='id', is_values_list=True,
+                    is_first=False, returning=None):
+        if not list_dict_save:
+            return None
+
+        if not returning:
+            returning = pk_name
+
+
+        columns = ''
+        values = ''
+        parameters = {}
+        columns_list = []
+        for count, dict_save in enumerate(list_dict_save):
+
+            dict_save['datm_delete'] = None
+            dict_save['datm_update'] = None
+            dict_save['datm_insert'] = None
+
+            is_update = True if dict_save.get(pk_name) else False
+            is_disable = False if dict_save.get('status', True) is True else True
+            log_type = 'update' if is_update else 'delete' if is_disable else 'insert'
+            dict_save = self.__build_log(dict_object=dict_save, log_type=log_type,)
+
+            if not columns:
+                columns = ','.join(dict_save.keys())
+                columns_list = dict_save.keys()
+
+            values_name = ''
+            for key, value in dict_save.items():
+                if key == pk_name and not value:
+                    values_name += ' default,'
+                else:
+                    parameters[f"{key}_{count}"] = value
+                    values_name += f" :{key}_{count},"
+
+            values_name = values_name[:-1]
+
+            values += f"({values_name}),"
+        values = values[:-1]
+
+        update = ''
+        for coluna in columns_list:
+            if coluna == 'datm_insert':
+                pass
+
+            elif coluna == 'datm_update':
+                update += f"""
+                    datm_update = case
+                    when EXCLUDED.datm_update is not null then EXCLUDED.datm_update
+                    else {table_name}.datm_update end,"""
+
+            elif coluna == 'datm_delete':
+                update += f"""
+                    datm_delete = case
+                    when EXCLUDED.datm_delete is not null then EXCLUDED.datm_delete
+                    else {table_name}.datm_delete end,"""
+            elif coluna == 'status':
+                update += f"""
+                    status = case
+                    when EXCLUDED.status is not null then EXCLUDED.status
+                    else {table_name}.status end,"""
+            else:
+                update += f"{coluna} = EXCLUDED.{coluna},"
+
+        update = update[:-1]
+
+        query = f"""
+            insert into {table_name}({columns}) values {values}
+            ON CONFLICT({pk_name}) DO UPDATE SET {update} RETURNING {returning};
+        """
 
         result = self.__query(query=query, parameters=parameters)
 
