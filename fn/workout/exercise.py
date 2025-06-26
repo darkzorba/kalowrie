@@ -35,17 +35,46 @@ class Exercise(SQLQuery):
         """, parameters=dict(team_id=team_id))
 
     @Response(desc_error="Error trying to save exercise.", return_list=['exercise_id'])
-    def save_exercise(self, name, type_id, muscle_group_id, equipment_id, image):
-        image_url = Files().upload_file(file=image, storage_folder='exercises', file_type='image')
+    def save_exercise(self, name, type_id, muscle_group_id, equipment_id, image = None, team_id = None, video = None):
+        if image:
+            image = Files().upload_file(file=image, storage_folder='exercises', file_type='image')
         dict_exercise = {
             'name': name,
-            'type_id': type_id,
+            'exercise_type_id': type_id,
             'muscle_group_id': muscle_group_id,
             'equipment_id': equipment_id,
-            'image': image_url
+            'image_url': image,
+            'team_id': team_id,
         }
 
         exercise_id = self.save('public.exercise', dict_exercise)
 
         return exercise_id
 
+
+    @Response(desc_error="Error fetching muscular groups.", return_list=['muscular_groups'])
+    def get_muscular_groups(self):
+        return self.select(f"""
+        select mg.id,
+               mg.name 
+        from public.muscle_group mg 
+        where mg.status = true
+        """)
+
+    @Response(desc_error="Error fetching exercise types.", return_list=['exercise_types'])
+    def get_exercise_types(self):
+        return self.select(f"""
+            select et.id,
+                   et.name 
+            from public.exercise_type et 
+            where et.status = true
+            """)
+
+    @Response(desc_error="Error fetching exercise equipments.", return_list=['exercise_equipments'])
+    def get_exercise_equipments(self):
+        return self.select(f"""
+            select ee.id,
+                   ee.name 
+            from public.exercise_equipment ee 
+            where ee.status = true
+            """)

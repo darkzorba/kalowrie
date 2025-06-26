@@ -18,6 +18,7 @@ class Workout(SQLQuery):
                 'we_id', we.id,
                 'id', we.exercise_id,
                'exercise_name',e.name,
+               'exercise_image', e.image_url,
                'sets', we.sets,
                'min_reps', we.min_reps,
                'max_reps', we.max_reps,
@@ -103,3 +104,11 @@ class Workout(SQLQuery):
 
 
         return workout_id
+
+    @Response(desc_error="Error deleting workout.", return_list=[])
+    def disable_workout(self, workout_id):
+        self.disable('workout', dict_filter={'id':workout_id})
+        result = self.disable('workout_exercise', dict_filter={'workout_id':workout_id})
+
+        if not result:
+            raise Exception()

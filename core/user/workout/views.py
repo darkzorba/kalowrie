@@ -17,6 +17,7 @@ class UserWorkoutView(APIView):
 
         return JsonResponse(response, safe=False, status=response['status_code'])
 
+
     def post(self, *args, **kwargs):
         user_id = self.request.data.get('student_id') or self.request.user.id
         workout_id = self.request.data.get('workout_id')
@@ -26,6 +27,14 @@ class UserWorkoutView(APIView):
 
         response = Workout(user_id=user_id).save_workout(workout_id=workout_id,week_day=week_day,
                                                          exercises_list=exercises_list, name=name)
+
+        return JsonResponse(response, safe=False, status=response['status_code'])
+
+    def delete(self, *args, **kwargs):
+        workout_id = self.request.data.get('workout_id')
+        user_id = self.request.data.get('student_id') or self.request.user.id
+
+        response = Workout(user_id=user_id).disable_workout(workout_id=workout_id)
 
         return JsonResponse(response, safe=False, status=response['status_code'])
 
