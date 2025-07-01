@@ -254,3 +254,24 @@ class SQLQuery:
         result = self.__query(query=query, parameters=parameters)
 
         return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)
+
+
+    def insert(self, table_name=None, dict_insert=None, pk_name='id', is_values_list=True, is_first=True, returning=None):
+        if not dict_insert:
+            return None
+        if not returning:
+            returning = pk_name
+
+        dict_insert = self.__build_log(dict_object=dict_insert, log_type='insert',)
+
+        columns_list = dict_insert.keys()
+        columns = ','.join(columns_list)
+
+        values_name = ','.join([f":{column}" for column in columns_list])
+
+
+        query = f"insert into {table_name} ({columns}) values ({values_name}) returning {returning}"
+
+        result = self.__query(query=query, parameters=dict_insert)
+
+        return self.format_result(result=result, is_values_list=is_values_list, is_first=is_first)
